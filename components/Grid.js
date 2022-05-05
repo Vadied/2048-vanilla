@@ -1,9 +1,22 @@
-const GRID_SIZE = 4;
-const CELL_SIZE = 20;
-const CELL_GAP = 2;
-
 import Cell from "./Cell.js";
+import Tile from "./Tile.js";
 
+import { canMove } from "../handlers/moveTiles.js";
+import { gridDimensions, keyEvent } from "../constants.js";
+const { GRID_SIZE, CELL_SIZE, CELL_GAP } = gridDimensions;
+const { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } = keyEvent;
+
+const createCellElement = (gridElement) => {
+  const cells = [];
+  for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cells.push(cell);
+    gridElement.append(cell);
+  }
+
+  return cells;
+};
 export default class Grid {
   #cells;
 
@@ -16,7 +29,7 @@ export default class Grid {
     });
   }
 
-  get cellsByColumn() {
+  get #cellsByColumn() {
     return this.#cells.reduce((cellGrid, cell) => {
       cellGrid[cell.x] = cellGrid[cell.x] || [];
       cellGrid[cell.x][cell.y] = cell;
@@ -46,24 +59,38 @@ export default class Grid {
   }
 
   getCellsByKey(key) {
-    if (key === "ArrowUp") return this.cellsByColumn;
-    if (key === "ArrowDown")
-      return this.cellsByColumn.map((column) => [...column].reverse());
-    if (key === "ArrowLeft") return this.cellsByRow;
-    if (key === "ArrowRight")
+    if (key === ArrowUp) return this.#cellsByColumn;
+    if (key === ArrowDown)
+      return this.#cellsByColumn.map((column) => [...column].reverse());
+    if (key === ArrowLeft) return this.cellsByRow;
+    if (key === ArrowRight)
       return this.cellsByRow.map((column) => [...column].reverse());
     return [];
   }
-}
 
-function createCellElement(gridElement) {
-  const cells = [];
-  for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cells.push(cell);
-    gridElement.append(cell);
+  mergeTiles() {
+    this.#cells.forEach((c) => c.mergeTiles());
   }
 
-  return cells;
+  generateTile(tileContainer) {
+    const newTile = new Tile(tileContainer);
+    this.randomEmptyCell().tile = newTile;
+
+    if (!this.areAvailableMoves())
+      newTile.waitForTransition({ animation: true }).then(() => {
+        console.log("test");
+        alert("Hai finito le mosse!");
+      });
+
+    return this.areAvailableMoves();
+  }
+
+  areAvailableMoves() {
+    return (
+      canMove(this.getCellsByKey(ArrowUp)) ||
+      canMove(this.getCellsByKey(ArrowDown)) ||
+      canMove(this.getCellsByKey(ArrowLeft)) ||
+      canMove(this.getCellsByKey(ArrowRight))
+    );
+  }
 }

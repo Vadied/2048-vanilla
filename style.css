@@ -47,7 +47,7 @@ body {
     color: hsl(120, 100%, var(--text-lightness));
     font-weight: 800;
     animation: show 200ms ease-in-out;
-    transition: 100ms ease-in-out;
+    transition: 200ms ease-in-out;
 }
 
 @keyframes show {

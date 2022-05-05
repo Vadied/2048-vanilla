@@ -13,11 +13,11 @@ export const slideTiles = (cells) => {
   return Promise.all(
     cells.flatMap((group) => {
       const promises = [];
-      for (let i = 1; i < group.length; i++) {
-        let lastValidCell;
-        const cell = group[i];
-        if (!cell.tile) continue;
 
+      group.forEach((cell, i) => {
+        if (!i || !cell.tile) return;
+
+        let lastValidCell;
         for (let j = i - 1; j >= 0; j--) {
           const moveToCell = group[j];
           if (!moveToCell.canAccept(cell.tile)) break;
@@ -33,7 +33,7 @@ export const slideTiles = (cells) => {
           }
           cell.tile = null;
         }
-      }
+      });
 
       return promises;
     })

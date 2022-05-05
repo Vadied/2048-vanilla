@@ -40,11 +40,15 @@ export default class Tile {
     this.#tileElement.style.setProperty("--y", value);
   }
 
-  waitForTransition() {
-    return new Promises((resolve) => {
-      this.#tileElement.addEventListener("transitioned", resolve, {
-        once: true,
-      });
+  waitForTransition({ animation = false }) {
+    return new Promise((resolve) => {
+      this.#tileElement.addEventListener(
+        animation ? "animationend" : "transitionend",
+        resolve,
+        {
+          once: true,
+        }
+      );
     });
   }
 

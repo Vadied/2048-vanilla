@@ -1,6 +1,5 @@
 import { slideTiles, canMove } from "./handlers/moveTiles.js";
 import Grid from "./components/Grid.js";
-import Tile from "./components/Tile.js";
 
 const setupInput = () => {
   window.addEventListener("keydown", handleInput, { once: true });
@@ -9,8 +8,8 @@ const setupInput = () => {
 const gameBoard = document.getElementById("game-board");
 
 const grid = new Grid(gameBoard);
-grid.randomEmptyCell().tile = new Tile(gameBoard);
-grid.randomEmptyCell().tile = new Tile(gameBoard);
+grid.generateTile(gameBoard);
+grid.generateTile(gameBoard);
 setupInput();
 
 async function handleInput(e) {
@@ -18,10 +17,9 @@ async function handleInput(e) {
   if (!cells.length || !canMove(cells)) return setupInput();
   await slideTiles(cells);
 
-  grid.cells.forEach((c) => c.mergeTiles());
-
-  const newTile = new Tile(gameBoard);
-  grid.randomEmptyCell().tile = newTile;
+  grid.mergeTiles();
+  const availableMoves = grid.generateTile(gameBoard);
+  if (!availableMoves) return;
 
   setupInput();
 }
