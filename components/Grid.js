@@ -78,7 +78,6 @@ export default class Grid {
 
     if (!this.areAvailableMoves())
       newTile.waitForTransition({ animation: true }).then(() => {
-        console.log("test");
         alert("Hai finito le mosse!");
       });
 
